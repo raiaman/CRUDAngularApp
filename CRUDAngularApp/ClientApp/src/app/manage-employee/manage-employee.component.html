@@ -1,0 +1,19 @@
+<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+<label>
+  First Name:
+  <input type="text" formControlName="Name">
+</label>
+<label>
+  City:
+  <input type="text" formControlName="City">
+</label>
+<label>
+  Address:
+  <input type="text" formControlName="Address">
+</label>
+<!-- Add other form fields here as needed -->
+<button type="submit">Submit</button>
+</form>
+
+<h2>Result:</h2>
+<pre>{{ result | json }}</pre>
