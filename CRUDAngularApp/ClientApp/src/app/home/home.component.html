@@ -1,1 +1,63 @@
-<h1>Welcometo our Employee Management Portal!</h1>
+<form [formGroup]="myForm">
+  <div class="alert alert-success" role="alert">
+    <h4 class="alert-heading">Welcome to <a class="alert-link">Grill and Shakes</a></h4>
+    <p>“Indulge in Culinary Excellence to Savor Every Bite, Cherish Every Moment”</p>
+    <hr>
+    <p class="mb-0">Life's too short for boring food.</p>
+  </div>
+
+  <div formArrayName="menulist">
+    <div *ngFor="let menu of menulist; let menuIndex = index" [formGroupName]="menuIndex">
+      <h3 class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center">{{ menu.header }}</h3>
+      <div formArrayName="items">
+        <div *ngFor="let item of menu.items; let itemIndex = index" [formGroupName]="itemIndex" class="d-flex justify-content-between align-items-center list-group-item-action row">
+
+          <div class="d-flex align-items-center" style="width:50%">
+            <img src="https://img.mobiscroll.com/demos/{{item.imgsrc}}" alt="" style="width: 45px; height: 45px"
+                 class="rounded-circle" />
+            <div class="ms-3">
+              <p class="fw-bold mb-1">{{item.name}}</p>
+              <p class="text-muted mb-0">&nbsp;</p>
+            </div>
+          </div>
+          <div style="width:50%">
+            <div class="row" *ngIf="item.price1 && item.price1 != '00'">
+              <div style="width:45%; font-size: 12px">
+                <p class="fa">Full &#xf156; {{item.price1}}</p>
+              </div>
+              <div style="width:55%; font-size: 12px">
+                <p>
+                  <span class="material-icons" (click)="decrementCounter1(menuIndex, itemIndex)">remove</span>
+                  <a style="vertical-align:top">
+                    <strong>
+                      <input style="width:15px" type="text" class="border-0" [attr.disabled]="true" formControlName="count1" value="{{ item.count1 }}">
+                    </strong>
+                  </a>
+                  <span class="material-icons" (click)="incrementCounter1(menuIndex, itemIndex)">add</span>
+                </p>
+              </div>
+            </div>
+            <div class="row" *ngIf="item.price2 && item.price2 != '00'">
+              <div style="width:45%; font-size:12px">
+                <p class="fa">Half &#xf156; {{item.price2}}</p>
+              </div>
+              <div style="width:55%; font-size: 12px">
+                <p>
+                  <span class="material-icons" (click)="decrementCounter2(menuIndex, itemIndex)">remove</span>
+                  <a style="vertical-align:top">
+                    <strong>
+                      <input style="width:15px" type="text" class="border-0" [attr.disabled]="true" formControlName="count2" value="{{ item.count2 }}">
+                    </strong>
+                  </a>
+                  <span class="material-icons" (click)="incrementCounter2(menuIndex, itemIndex)">add</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <button type="submit" (click)="onSubmit()" style="width:140px; position: absolute; left: 50%; margin-right: -50%; transform: translate(-50%, -50%);" class="btn btn-success">Add to Cart</button>
+  </div>
+</form>
