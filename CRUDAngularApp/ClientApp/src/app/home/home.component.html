@@ -58,6 +58,50 @@
         </div>
       </div>
     </div>
-    <button type="submit" (click)="onSubmit()" style="width:140px; position: absolute; left: 50%; margin-right: -50%; transform: translate(-50%, -50%);" class="btn btn-success">Add to Cart</button>
+    <div style="padding:20px">
+      <button type="submit" (click)="onSubmit()" style="width:140px; position: absolute; left: 50%; margin-right: -50%; transform: translate(-50%, -50%);" class="btn btn-success">Add to Cart</button>
+    </div>
   </div>
+
+  <!-- Modal content -->
+  <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display': displayStyle}" *ngIf="formValues">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Order Details</h4>
+            <select class="form-control" formControlName="tableNumber" style="width:50%">
+              <option value="" selected disabled>--Select Table--</option>
+              <option value="1">Table 1</option>
+              <option value="2">Table 2</option>
+            </select>
+        </div>
+        <div class="modal-body">
+          <div *ngFor="let menu of formValues.menulist">
+            <ul *ngFor="let item of menu.items">
+              <li *ngIf="item.count1 > 0 || item.count2 > 0">
+                <p>
+                  {{ item.name }} - 
+                  <span *ngIf="item.count1>0">
+                    Full: {{ item.count1}}
+                  </span>
+                  <span *ngIf="item.count1 && item.count2">
+                    and
+                  </span>
+                  <span *ngIf="item.count2>0">
+                    Half: {{ item.count2 }}
+                  </span>
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div style="padding-top:30px">
+          <button type="button" style="width:140px; position: absolute; left: 50%; margin-right: -50%; transform: translate(-50%, -125%);" class="btn btn-success" (click)="closePopup()">
+            Confirm Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </form>

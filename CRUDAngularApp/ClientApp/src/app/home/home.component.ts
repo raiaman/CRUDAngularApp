@@ -768,9 +768,13 @@ export class HomeComponent {
           count2: 0
         }]
     }];
+  selectedTableNo: string = '';
+  formValues: any; 
+  displayStyle: string = 'none';
 
   constructor(private formBuilder: FormBuilder) {
     this.myForm = this.formBuilder.group({
+      tableNumber: [''],
       menulist: this.formBuilder.array([])
     });
 
@@ -787,7 +791,8 @@ export class HomeComponent {
       menu.items.forEach(item => {
         const itemFormGroup = this.formBuilder.group({
           count1: item.count1,
-          count2: item.count2
+          count2: item.count2,
+          name: item.name
         });
 
         itemsFormArray.push(itemFormGroup);
@@ -797,9 +802,16 @@ export class HomeComponent {
     });
   } // Inject FormBuilder in the constructor
 
+  openPopup() {
+    this.displayStyle = "block";
+  }
+  closePopup() {
+    this.displayStyle = "none";
+  }
+
   onSubmit() {
-    const formValues = this.myForm.value;
-    console.log('Form Values:', formValues);
+    this.formValues = this.myForm.value;
+    this.openPopup();
   }
 
   public incrementCounter1(menuIndex: number, itemIndex: number) {
