@@ -1,4 +1,5 @@
 <form [formGroup]="myForm">
+  <!-- Restaurant welcome message -->
   <div class="alert alert-success" role="alert">
     <h4 class="alert-heading">Welcome to <a class="alert-link">Grill and Shakes</a></h4>
     <p>“Indulge in Culinary Excellence to Savor Every Bite, Cherish Every Moment”</p>
@@ -6,12 +7,15 @@
     <p class="mb-0">Life's too short for boring food.</p>
   </div>
 
+  <!-- Display the menu items -->
   <div formArrayName="menulist">
     <div *ngFor="let menu of menulist; let menuIndex = index" [formGroupName]="menuIndex">
+      <!-- Menu header -->
       <h3 class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center">{{ menu.header }}</h3>
       <div formArrayName="items">
+        <!-- Display individual menu items -->
         <div *ngFor="let item of menu.items; let itemIndex = index" [formGroupName]="itemIndex" class="d-flex justify-content-between align-items-center list-group-item-action row">
-
+          <!-- Display menu item details -->
           <div class="d-flex align-items-center" style="width:50%">
             <img src="https://img.mobiscroll.com/demos/{{item.imgsrc}}" alt="" style="width: 45px; height: 45px"
                  class="rounded-circle" />
@@ -21,6 +25,7 @@
             </div>
           </div>
           <div style="width:50%">
+            <!-- Full -->
             <div class="row" *ngIf="item.price1 && item.price1 != '00'">
               <div style="width:45%; font-size: 12px">
                 <p class="fa">Full &#xf156; {{item.price1}}</p>
@@ -37,6 +42,7 @@
                 </p>
               </div>
             </div>
+            <!-- Half -->
             <div class="row" *ngIf="item.price2 && item.price2 != '00'">
               <div style="width:45%; font-size:12px">
                 <p class="fa">Half &#xf156; {{item.price2}}</p>
@@ -58,46 +64,46 @@
         </div>
       </div>
     </div>
+    <!-- Add to Cart button -->
     <div style="padding:20px">
-      <button type="submit" (click)="onSubmit()" style="width:140px; position: absolute; left: 50%; margin-right: -50%; transform: translate(-50%, -50%);" class="btn btn-success">Add to Cart</button>
+      <button type="submit" (click)="addCart()" style="width:140px; position: absolute; left: 50%; margin-right: -50%; transform: translate(-50%, -50%);" class="btn btn-success">Add to Cart</button>
     </div>
   </div>
 
-  <!-- Modal content -->
+  <!-- Display order details in a Modal -->
   <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display': displayStyle}" *ngIf="formValues">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-            <h4 class="modal-title">Order Details</h4>
-            <select class="form-control" formControlName="tableNumber" style="width:50%">
-              <option value="" selected disabled>--Select Table--</option>
-              <option value="1">Table 1</option>
-              <option value="2">Table 2</option>
-            </select>
+        <!-- Close button icon on top right -->
+        <button type="button" style="position: fixed; top: 10px; right: 10px;margin-bottom:20px" class="btn-close" aria-label="Close" (click)="closePopup()"></button>
+        <div class="modal-header" style="padding-top:40px">
+          <!-- Title and table selection -->
+          <h4 class="modal-title" style="margin-top:-20px">Order Details</h4>
+          <select class="form-control" formControlName="table" (change)="onTableSelectionChange($event)" style="width: 40%; position: absolute; right: 20px;">
+            <option value="" disabled>Select Table No</option>
+            <option style="text-align: center; align-items:center" *ngFor="let table of tables" [value]="table">{{ table }}</option>
+          </select>
         </div>
+        <span style="text-align:right;float:right; align-items:end;font-size:12px; color:red;padding-right:10px">Please select table no to place order</span>
         <div class="modal-body">
+          <!-- Display selected items and quantities -->
           <div *ngFor="let menu of formValues.menulist">
             <ul *ngFor="let item of menu.items">
               <li *ngIf="item.count1 > 0 || item.count2 > 0">
                 <p>
-                  {{ item.name }} - 
-                  <span *ngIf="item.count1>0">
-                    Full: {{ item.count1}}
-                  </span>
-                  <span *ngIf="item.count1 && item.count2">
-                    and
-                  </span>
-                  <span *ngIf="item.count2>0">
-                    Half: {{ item.count2 }}
-                  </span>
+                  {{ item.name }} -
+                  <span *ngIf="item.count1>0">Full: {{ item.count1}}</span>
+                  <span *ngIf="item.count1 && item.count2"> and </span>
+                  <span *ngIf="item.count2>0">Half: {{ item.count2 }}</span>
                 </p>
               </li>
             </ul>
           </div>
         </div>
+        <!-- Place order button -->
         <div style="padding-top:30px">
-          <button type="button" style="width:140px; position: absolute; left: 50%; margin-right: -50%; transform: translate(-50%, -125%);" class="btn btn-success" (click)="closePopup()">
-            Confirm Order
+          <button [disabled]="!myForm.valid" type="button" style="width:140px; position: absolute; left: 50%; margin-right: -50%; transform: translate(-50%, -125%);" class="btn btn-success" (click)="placeOrder()">
+            Place Order
           </button>
         </div>
       </div>

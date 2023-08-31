@@ -1,27 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
-
-interface MenuItem {
-  imgsrc: string;
-  name: string;
-  price1: string;
-  price2: string;
-  count1: number;
-  count2: number;
-}
-
-interface MenuDetails {
-  header: string;
-  items: MenuItem[];
-}
+import { FormBuilder, FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
 })
+
 export class HomeComponent {
   public currentCount = 0;
-  myForm: FormGroup; // Declare myForm as FormGroup
+  myForm: FormGroup;
   menulist: MenuDetails[] = [
     {
       header: 'VEG MOMOS',
@@ -768,13 +755,15 @@ export class HomeComponent {
           count2: 0
         }]
     }];
-  selectedTableNo: string = '';
-  formValues: any; 
+  formValues: any;
   displayStyle: string = 'none';
+  tables: number[] = [1, 2, 3, 4, 5, 6];
+  orderItems: any[] = [];
+  selectedTable: any;
 
   constructor(private formBuilder: FormBuilder) {
     this.myForm = this.formBuilder.group({
-      tableNumber: [''],
+      table: ['', Validators.required],
       menulist: this.formBuilder.array([])
     });
 
@@ -800,18 +789,6 @@ export class HomeComponent {
 
       menulistFormArray.push(menuFormGroup);
     });
-  } // Inject FormBuilder in the constructor
-
-  openPopup() {
-    this.displayStyle = "block";
-  }
-  closePopup() {
-    this.displayStyle = "none";
-  }
-
-  onSubmit() {
-    this.formValues = this.myForm.value;
-    this.openPopup();
   }
 
   public incrementCounter1(menuIndex: number, itemIndex: number) {
@@ -845,7 +822,7 @@ export class HomeComponent {
     const itemFormGroup = itemsFormArray.at(itemIndex) as FormGroup;
     const count1Control = itemFormGroup.get('count1') as FormControl;
 
-    if (count1Control.value >0) {
+    if (count1Control.value > 0) {
       count1Control.setValue(count1Control.value - 1);
     }
   }
@@ -862,4 +839,63 @@ export class HomeComponent {
     }
   }
 
+  // Generate order items count for validation
+  generateOrderItems() {
+    this.orderItems = [];
+    for (const section of this.formValues.menulist) {
+      for (const item of section.items) {
+        if (item.count1 > 0 || item.count2 > 0) {
+          this.orderItems.push({
+            name: item.name,
+            full: item.count1,
+            half: item.count2
+          });
+        }
+      }
+    }
+  }
+
+  closePopup() {
+    this.displayStyle = "none";
+    this.formValues = null;
+    this.myForm.controls.table.setValue('');
+  }
+
+  addCart() {
+    this.formValues = this.myForm.value;
+    this.displayStyle = 'none';
+    this.generateOrderItems();
+    // Check if any items are selected before opening modal
+    if (this.orderItems.length > 0) {
+      this.displayStyle = 'block';
+    } else {
+      alert('Please select items to add to the cart.');
+    }
+  }
+
+  placeOrder() {
+    this.displayStyle = "none";
+    this.formValues = null;
+    this.myForm.controls.table.setValue('');
+    console.log(this.orderItems);
+    console.log('Selected Table:', this.selectedTable);
+  }
+
+  onTableSelectionChange(event: any) {
+    this.selectedTable = event.target.value;
+  }
+}
+
+interface MenuItem {
+  imgsrc: string;
+  name: string;
+  price1: string;
+  price2: string;
+  count1: number;
+  count2: number;
+}
+
+interface MenuDetails {
+  header: string;
+  items: MenuItem[];
 }
